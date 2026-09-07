@@ -159,3 +159,17 @@
   .roadmap-index>header h2{font-size:41px}
   .chapter-title h2{font-size:47px}
 }
+
+.hero-mobile-art{display:none}
+
+@media(max-width:680px){
+  .masthead{display:grid;grid-template-columns:108px 1fr 132px;align-items:center}
+  .masthead img{display:block;align-self:center}
+  .platform-links{position:static!important;width:132px!important;height:100%;align-self:stretch;justify-self:end;display:grid!important;grid-template-columns:repeat(3,44px);align-items:center;justify-content:end;gap:0}
+  .masthead .platform-links>a,.platform-links .nav-steam,.platform-links .nav-patreon,.platform-links .nav-discord{position:static!important;inset:auto!important;display:flex!important;width:44px;min-width:44px;min-height:44px;align-items:center;justify-content:center}
+
+  .hero-film{display:none}
+  .hero-mobile-art{position:absolute;z-index:-2;display:block;inset:72px 0 auto;width:100%;height:44%;overflow:hidden;clip-path:polygon(0 0,100% 0,100% 88%,0 100%)}
+  .hero-mobile-art img{display:block;width:100%;height:100%;object-fit:cover;object-position:62% center}
+
+}
