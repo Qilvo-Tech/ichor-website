@@ -81,3 +81,81 @@
 .action a:has(.steam-mark),.action a:has(.patreon-mark),.action a:has(.discord-mark){gap:10px}
 .action a .steam-mark,.action a .patreon-mark,.action a .discord-mark{font-size:21px}
 @media(max-width:680px){.platform-links{gap:16px}.platform-links a span{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}.nav-steam .steam-mark,.nav-patreon .patreon-mark,.nav-discord .discord-mark{font-size:22px}}
+
+/* Responsive media */
+.panel-0:before{background-image:url('/assets/milestone-foundation.webp')}
+.panel-1:before{background-image:url('/assets/milestone-fellowship.webp')}
+.panel-2:before{background-image:url('/assets/milestone-craft.webp')}
+.panel-3:before{background-image:url('/assets/milestone-mastery.webp')}
+.wish-image{overflow:hidden;background-image:none}
+.wish-image img{display:block;width:100%;height:100%;object-fit:cover}
+
+@media(max-width:680px){
+  body{-webkit-text-size-adjust:100%}
+  button,a{touch-action:manipulation}
+
+  .masthead{position:relative;display:flex;width:calc(100% - 32px);height:72px;justify-content:space-between}
+  .masthead>a{display:none}
+  .masthead img{width:108px}
+  .platform-links{display:flex!important;visibility:visible;opacity:1;position:absolute;z-index:2;top:14px;right:0;width:126px;justify-content:space-between;gap:0}
+  .platform-links a{display:flex!important;width:34px;min-width:34px;min-height:44px;justify-content:center;color:var(--parchment)}
+  .platform-links .nav-steam{position:absolute;right:92px}
+  .platform-links .nav-patreon{position:absolute;right:46px}
+  .platform-links .nav-discord{position:absolute;right:0}
+
+  .hero{min-height:max(740px,100svh)}
+  .hero-film{inset:72px 0 auto;width:100%;height:44%;margin:0;clip-path:polygon(0 0,100% 0,100% 88%,0 100%);object-position:62% center}
+  .hero-wash{background:linear-gradient(0deg,var(--deep) 0 50%,rgba(14,16,15,.34) 73%,rgba(14,16,15,.06) 100%)}
+  .hero-copy{width:auto;margin:0;padding:clamp(292px,46svh,390px) 20px 120px}
+  .hero h1{width:100%;max-width:9ch;font-size:clamp(44px,13vw,56px);line-height:.91;letter-spacing:-.05em}
+  .hero-copy>p{width:100%;max-width:34ch;margin-top:24px;font-size:16px;line-height:1.5;overflow-wrap:break-word}
+  .hero-steam{width:100%;min-height:104px;margin-top:30px;padding:19px 22px 21px}
+  .hero-steam strong{font-size:30px}
+  .scroll-cue{left:20px;bottom:24px;min-height:44px}
+
+  .roadmap-index{padding:96px 16px 110px}
+  .roadmap-index>header{margin-bottom:32px}
+  .roadmap-index>header h2{font-size:45px}
+  .index-controls button{width:46px;height:46px}
+  .accordion-panel:before{display:none}
+  .accordion-panel{min-height:78px}
+  .accordion-panel.active{min-height:276px}
+  .accordion-panel button{padding:20px 20px 64px}
+  .accordion-panel h3,.accordion-panel.active h3{font-size:36px;margin:14px 0}
+  .accordion-panel p{max-width:30ch;font-size:15px;line-height:1.5}
+  .accordion-panel>a{left:20px;right:20px;min-height:40px;align-items:center}
+
+  .chapter-stack{padding:0 8px 96px}
+  .chapter-card{content-visibility:auto;contain-intrinsic-size:760px;padding:36px 22px 210px;margin-bottom:16px;border:0;min-height:0}
+  .chapter-title h2{font-size:clamp(48px,15vw,62px);line-height:.86;margin:20px 0 26px;letter-spacing:-.045em}
+  .chapter-title p{font-size:16px;line-height:1.52}
+  .chapter-features{margin-top:42px}
+  .chapter-features section{gap:13px;padding:21px 0}
+  .chapter-features h3{font-size:10px}
+  .chapter-features li{font-size:17px;line-height:1.32;margin-bottom:11px}
+  .chapter-image{height:176px}
+
+  .wishes{padding:104px 20px 96px;content-visibility:auto;contain-intrinsic-size:900px}
+  .wishes h2{max-width:9ch;font-size:clamp(45px,12.5vw,54px);line-height:.94}
+  .wishes-copy>p{max-width:31ch;font-size:15px;line-height:1.5}
+  .wish-orbit{display:grid;grid-auto-flow:column;grid-template-rows:repeat(2,164px);grid-auto-columns:max-content;align-content:center;justify-content:start;width:auto;height:360px;margin:48px -20px 0 0;padding:14px 20px 14px 0;gap:8px 12px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x proximity;scroll-padding-left:0;scrollbar-width:none}
+  .wish-orbit::-webkit-scrollbar{display:none}
+  .wish-bubble,.wish-image{position:static;scroll-snap-align:center}
+  .wish-pvp{--size:158px;font-size:38px}.wish-consoles{--size:138px;font-size:20px}.wish-housing{--size:122px}.wish-mounts{--size:140px;font-size:20px}.wish-mobile{--size:108px}.wish-hardcore{--size:126px;font-size:13px}.wish-pets{--size:92px}.wish-guilds{--size:136px;font-size:14px}.wish-events{--size:122px}.wish-raids{--size:94px}.wish-image-meadow{--size:108px}.wish-image-world{--size:114px}
+
+  .action{padding:96px 20px 90px;content-visibility:auto;contain-intrinsic-size:680px}
+  .action img{width:112px}
+  .action h2{max-width:8ch;font-size:clamp(48px,14vw,58px);line-height:.88;margin:48px 0 56px}
+  .action>div{display:grid}
+  .action a{width:100%;min-width:0;min-height:58px;padding:16px 18px}
+  footer{gap:20px;padding:38px 20px 48px;line-height:1.5}
+}
+
+@media(max-width:390px){
+  .platform-links{gap:12px}
+  .hero-copy{padding-top:clamp(276px,44svh,350px)}
+  .hero h1{font-size:43px}
+  .hero-steam strong{font-size:27px}
+  .roadmap-index>header h2{font-size:41px}
+  .chapter-title h2{font-size:47px}
+}

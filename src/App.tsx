@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -10,21 +10,21 @@ type Group = { title: string; features: string[] }
 type Milestone = { number: string; title: string; summary: string; image: string; imageAlt: string; groups: Group[] }
 
 const milestones: Milestone[] = [
-  { number:'01', title:'Foundation', summary:'Complete the core game loop: explore, fight, grow, equip, prepare, and follow quests.', image:'/assets/milestone-foundation.png', imageAlt:'An adventurer exploring a sunlit forest settlement in Ichor Online', groups:[
+  { number:'01', title:'Foundation', summary:'Complete the core game loop: explore, fight, grow, equip, prepare, and follow quests.', image:'/assets/milestone-foundation.webp', imageAlt:'An adventurer exploring a sunlit forest settlement in Ichor Online', groups:[
     {title:'World',features:['New biome and enemy type','New central city','Quests']},
     {title:'Character',features:['Expanded character creator','Levels and assignable attributes','Inventory and character screen','Armor and item stats']},
     {title:'Combat',features:['Consumables and preparation','Combat feel and feedback']},
   ]},
-  { number:'02', title:'Fellowship', summary:'Give players clear ways to meet, organize, and overcome larger challenges together.', image:'/assets/milestone-fellowship.png', imageAlt:'An adventurer fighting a group of enemies in a flower meadow', groups:[
+  { number:'02', title:'Fellowship', summary:'Give players clear ways to meet, organize, and overcome larger challenges together.', image:'/assets/milestone-fellowship.webp', imageAlt:'An adventurer fighting a group of enemies in a flower meadow', groups:[
     {title:'Together',features:['Party system','Basic guilds']},
     {title:'Challenges',features:['Roaming bosses','Dungeons']},
   ]},
-  { number:'03', title:'Craft & Trade', summary:'Connect gathering, crafting, and regional trade in a player-driven economy.', image:'/assets/milestone-craft.png', imageAlt:'A woodland market area with crates and gathered goods', groups:[
+  { number:'03', title:'Craft & Trade', summary:'Connect gathering, crafting, and regional trade in a player-driven economy.', image:'/assets/milestone-craft.webp', imageAlt:'A woodland market area with crates and gathered goods', groups:[
     {title:'Professions',features:['Gathering','Crafting']},
     {title:'Markets',features:['Regional taxed auction houses','Player-to-player trading']},
     {title:'Economy',features:['Player-driven supply and demand']},
   ]},
-  { number:'04', title:'Mastery', summary:'Let players define their role and develop a distinct long-term build.', image:'/assets/milestone-mastery.png', imageAlt:'An adventurer testing a combat build against a training target', groups:[
+  { number:'04', title:'Mastery', summary:'Let players define their role and develop a distinct long-term build.', image:'/assets/milestone-mastery.webp', imageAlt:'An adventurer testing a combat build against a training target', groups:[
     {title:'Classes',features:['More playable classes']},
     {title:'Builds',features:['Deeper build variety']},
     {title:'Growth',features:['Expanded progression']},
@@ -53,6 +53,12 @@ const DiscordMark = () => <svg className="discord-mark" viewBox="0 0 24 24" aria
 function App() {
   const root = useRef<HTMLElement>(null)
   const [active, setActive] = useState(0)
+
+  useEffect(() => {
+    const target = window.location.hash.slice(1)
+    if (!target) return
+    requestAnimationFrame(() => document.getElementById(target)?.scrollIntoView())
+  }, [])
 
   useGSAP(() => {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -88,7 +94,7 @@ function App() {
     <a className="skip-link" href="#roadmap">Skip to roadmap</a>
 
     <header className="hero">
-      <video className="hero-film" autoPlay muted loop playsInline poster="/assets/hero.png"><source src="/assets/world.webm" type="video/webm" /></video>
+      <video className="hero-film" autoPlay muted loop playsInline preload="metadata" poster="/assets/hero.webp"><source src="/assets/world.webm" type="video/webm" media="(min-width: 681px)" /></video>
       <div className="hero-wash" />
       <nav className="masthead">
         <img src="/assets/logo.png" alt="Ichor Online" />
@@ -131,7 +137,7 @@ function App() {
 
     <section className="chapter-stack" aria-label="Milestone details">
       {milestones.map((milestone,index)=><article className={`chapter-card chapter-${index}`} id={slugOf(milestone.title)} key={milestone.title}>
-        <div className="chapter-image"><img src={milestone.image} alt={milestone.imageAlt} /></div>
+        <div className="chapter-image"><img src={milestone.image} alt={milestone.imageAlt} loading="lazy" decoding="async" /></div>
         <div className="chapter-title"><span>{milestone.number}</span><h2>{milestone.title}</h2><p>{milestone.summary}</p></div>
         <div className="chapter-features">
           {milestone.groups.map(group=><section key={group.title}><h3>{group.title}</h3><ul>{group.features.map(feature=><li key={feature}>{feature}</li>)}</ul></section>)}
@@ -146,8 +152,8 @@ function App() {
         <p>Some ambitions need more time, more players, or both.</p>
       </div>
       <div className="wish-orbit" aria-label="Future ambitions">
-        <span className="wish-image wish-image-meadow" aria-hidden="true" />
-        <span className="wish-image wish-image-world" aria-hidden="true" />
+        <span className="wish-image wish-image-meadow" aria-hidden="true"><img src="/assets/wish-meadow.webp" alt="" loading="lazy" decoding="async" /></span>
+        <span className="wish-image wish-image-world" aria-hidden="true"><img src="/assets/wish-world.webp" alt="" loading="lazy" decoding="async" /></span>
         {wishes.map(wish=><span className={`wish-bubble ${wish.className}`} key={wish.label}>{wish.label}</span>)}
       </div>
     </section>
