@@ -137,7 +137,7 @@ function App() {
         {milestones.map((milestone,index)=><article className={`accordion-panel panel-${index}${active===index?' active':''}`} key={milestone.title} onMouseEnter={()=>setActive(index)} onFocus={()=>setActive(index)}>
           <button type="button" onClick={()=>setActive(index)} aria-expanded={active===index}>
             <span>{milestone.number}</span>
-            <h3>{milestone.title}</h3>
+            <h3><span className="title-vertical" aria-hidden="true">{milestone.title}</span><span className="title-horizontal">{milestone.title}</span></h3>
             <p>{milestone.summary}</p>
           </button>
           <a href={`#${slugOf(milestone.title)}`}>View milestone <span>↘</span></a>

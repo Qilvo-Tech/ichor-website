@@ -197,3 +197,18 @@
   .wish-races{--size:112px}.wish-offline{--size:108px}.wish-private{--size:126px}.wish-ui{--size:118px}
   .action h2{margin:0 0 56px}
 }
+
+/* Accordion titles crossfade between two stable orientations. */
+.accordion-panel h3,.accordion-panel.active h3{position:relative;writing-mode:horizontal-tb;transform:none;white-space:normal;transition:none}
+.accordion-panel h3{min-height:190px}
+.accordion-panel .title-vertical{position:absolute;inset:0 auto auto 0;display:block;writing-mode:vertical-rl;text-orientation:mixed;opacity:1;transition:opacity .22s ease}
+.accordion-panel .title-horizontal{display:block;opacity:0;transform:translateY(8px);transition:opacity .28s ease,transform .28s ease}
+.accordion-panel.active h3{min-height:0}
+.accordion-panel.active .title-vertical{opacity:0;pointer-events:none}
+.accordion-panel.active .title-horizontal{opacity:1;transform:none;transition-delay:.16s}
+
+@media(max-width:680px){
+  .accordion-panel h3,.accordion-panel.active h3{min-height:0}
+  .accordion-panel .title-vertical{display:none}
+  .accordion-panel .title-horizontal{opacity:1;transform:none;transition:none}
+}
