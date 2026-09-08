@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { siDiscord, siPatreon, siSteam } from 'simple-icons'
 
 type Group = { title: string; features: string[] }
@@ -50,7 +50,6 @@ const PatreonMark = () => <svg className="patreon-mark" viewBox="0 0 24 24" aria
 const DiscordMark = () => <svg className="discord-mark" viewBox="0 0 24 24" aria-hidden="true"><path d={siDiscord.path} /></svg>
 
 function App() {
-  const root = useRef<HTMLElement>(null)
   const [active, setActive] = useState(0)
 
   useEffect(() => {
@@ -59,49 +58,9 @@ function App() {
     requestAnimationFrame(() => document.getElementById(target)?.scrollIntoView())
   }, [])
 
-  useEffect(() => {
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const desktop = window.matchMedia('(min-width: 681px)').matches
-    if (reduce || !desktop) return
-
-    let cancelled = false
-    let cleanup: (() => void) | undefined
-
-    Promise.all([import('gsap'), import('gsap/ScrollTrigger')]).then(([gsapModule, triggerModule]) => {
-      if (cancelled) return
-      const gsap = gsapModule.default
-      const { ScrollTrigger } = triggerModule
-      gsap.registerPlugin(ScrollTrigger)
-      const context = gsap.context(() => {
-        gsap.utils.toArray<HTMLElement>('.chapter-card').forEach((card, index) => {
-          gsap.fromTo(card, { y: 22, opacity: .78 }, {
-            y: 0,
-            opacity: 1,
-            ease: 'none',
-            scrollTrigger: { trigger: card, start: 'top 92%', end: 'top 28%', scrub: .8 },
-          })
-          if (index < milestones.length - 1) {
-            gsap.to(card, {
-              y: -14,
-              opacity: .34,
-              ease: 'none',
-              scrollTrigger: { trigger: card, start: 'bottom 74%', end: 'bottom 18%', scrub: .8 },
-            })
-          }
-        })
-      }, root)
-      cleanup = () => context.revert()
-    })
-
-    return () => {
-      cancelled = true
-      cleanup?.()
-    }
-  }, [])
-
   const move = (direction: number) => setActive(current => (current + direction + milestones.length) % milestones.length)
 
-  return <main ref={root} id="top">
+  return <main id="top">
     <a className="skip-link" href="#roadmap">Skip to roadmap</a>
 
     <header className="hero">
@@ -135,7 +94,7 @@ function App() {
         </div>
       </header>
       <div className={`milestone-accordion active-${active}`}>
-        {milestones.map((milestone,index)=><article className={`accordion-panel panel-${index}${active===index?' active':''}`} key={milestone.title} onMouseEnter={()=>setActive(index)} onFocus={()=>setActive(index)}>
+        {milestones.map((milestone,index)=><article className={`accordion-panel panel-${index}${active===index?' active':''}`} key={milestone.title} onFocus={()=>setActive(index)}>
           <button type="button" onClick={()=>setActive(index)} aria-expanded={active===index}>
             <span>{milestone.number}</span>
             <h3><span className="title-vertical" aria-hidden="true">{milestone.title}</span><span className="title-horizontal">{milestone.title}</span></h3>
