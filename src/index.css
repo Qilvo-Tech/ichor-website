@@ -198,30 +198,21 @@
   .action h2{margin:0 0 56px}
 }
 
-/* Accordion titles crossfade between two stable orientations. */
-.accordion-panel h3,.accordion-panel.active h3{position:relative;writing-mode:horizontal-tb;transform:none;white-space:normal;transition:none}
-.accordion-panel h3{min-height:190px}
-.accordion-panel .title-vertical{position:absolute;inset:0 auto auto 0;display:block;writing-mode:vertical-rl;text-orientation:mixed;opacity:1;transition:opacity .22s ease}
-.accordion-panel .title-horizontal{display:block;opacity:0;transform:translateY(8px);transition:opacity .28s ease,transform .28s ease}
-.accordion-panel.active h3{min-height:0}
-.accordion-panel.active .title-vertical{opacity:0;pointer-events:none}
-.accordion-panel.active .title-horizontal{opacity:1;transform:none;transition-delay:.16s}
-
-@media(max-width:680px){
-  .accordion-panel h3,.accordion-panel.active h3{min-height:0}
-  .accordion-panel .title-vertical{display:none}
-  .accordion-panel .title-horizontal{opacity:1;transform:none;transition:none}
-}
-
-/* One measured motion curve for the roadmap accordion. */
-.milestone-accordion{transition:grid-template-columns .9s cubic-bezier(.22,1,.36,1)}
-.accordion-panel{transition:background-color .55s ease}
+/* Stable roadmap selector: headings never change orientation or reflow. */
+.milestone-accordion{height:430px;min-height:430px;transition:grid-template-columns .72s cubic-bezier(.22,1,.36,1)}
+.accordion-panel{transition:background-color .42s ease}
+.accordion-panel h3,.accordion-panel.active h3{position:relative;min-height:3.2em;writing-mode:horizontal-tb;transform:none;white-space:nowrap;font-size:clamp(24px,2.4vw,40px);transition:none}
+.accordion-panel .title-vertical{display:none}
+.accordion-panel .title-horizontal,.accordion-panel.active .title-horizontal{display:block;opacity:1;transform:none;transition:none}
 .accordion-panel:before{transition:opacity .75s ease,transform 1.05s cubic-bezier(.22,1,.36,1)}
-.accordion-panel p{transition:opacity .45s ease .18s,transform .55s cubic-bezier(.22,1,.36,1) .14s}
-.accordion-panel>a{transition:opacity .4s ease .26s}
-.accordion-panel .title-vertical{transition:opacity .4s ease}
-.accordion-panel .title-horizontal{transform:translateY(5px);transition:opacity .45s ease,transform .55s cubic-bezier(.22,1,.36,1)}
-.accordion-panel.active .title-horizontal{transition-delay:.18s}
+.accordion-panel p{transform:none;transition:opacity .22s ease}
+.accordion-panel.active p{transition:opacity .3s ease .42s}
+.accordion-panel>a{transition:opacity .22s ease}
+.accordion-panel.active>a{transition:opacity .3s ease .48s}
+
+@media(min-width:681px) and (max-width:980px){
+  .milestone-accordion{height:390px;min-height:390px}
+}
 
 /* Content-driven milestone cards and a consistent page gutter. */
 .chapter-stack{padding-right:max(36px,calc((100vw - 1440px)/2));padding-bottom:clamp(100px,14vh,160px);padding-left:max(36px,calc((100vw - 1440px)/2))}
@@ -236,9 +227,13 @@
 @media(max-width:680px){
   .masthead{width:calc(100% - 40px)}
   .roadmap-index{padding-right:20px;padding-left:20px}
-  .accordion-panel{transition:min-height .68s cubic-bezier(.22,1,.36,1),background-color .5s ease}
-  .accordion-panel p{display:block;max-height:0;overflow:hidden;opacity:0;transform:translateY(6px);transition:max-height .68s cubic-bezier(.22,1,.36,1),opacity .38s ease,transform .5s cubic-bezier(.22,1,.36,1)}
-  .accordion-panel.active p{max-height:8rem;opacity:1;transform:none;transition-delay:.08s}
+  .milestone-accordion{height:510px;min-height:510px}
+  .accordion-panel,.accordion-panel.active{height:auto;min-height:0}
+  .accordion-panel{flex:0 0 78px;transition:flex-basis .58s cubic-bezier(.22,1,.36,1),background-color .42s ease}
+  .accordion-panel.active{flex-basis:276px}
+  .accordion-panel h3,.accordion-panel.active h3{min-height:0;white-space:normal;font-size:36px}
+  .accordion-panel p{display:block;max-height:none;overflow:visible;opacity:0;transform:none;transition:opacity .18s ease}
+  .accordion-panel.active p{opacity:1;transition:opacity .3s ease .3s}
   .chapter-stack{padding-right:20px;padding-bottom:88px;padding-left:20px}
   .chapter-card{padding:36px 22px 44px;margin-bottom:16px}
   .chapter-title h2{margin:20px 0 26px}
