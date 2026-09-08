@@ -74,14 +74,15 @@ function App() {
       gsap.registerPlugin(ScrollTrigger)
       const context = gsap.context(() => {
         gsap.utils.toArray<HTMLElement>('.chapter-card').forEach((card, index) => {
-          gsap.fromTo(card, { scale: .965 }, {
-            scale: 1,
+          gsap.fromTo(card, { y: 22, opacity: .78 }, {
+            y: 0,
+            opacity: 1,
             ease: 'none',
             scrollTrigger: { trigger: card, start: 'top 92%', end: 'top 28%', scrub: .8 },
           })
           if (index < milestones.length - 1) {
             gsap.to(card, {
-              scale: .92,
+              y: -14,
               opacity: .34,
               ease: 'none',
               scrollTrigger: { trigger: card, start: 'bottom 74%', end: 'bottom 18%', scrub: .8 },
