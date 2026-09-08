@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { motion } from 'motion/react'
 import { siDiscord, siPatreon, siSteam } from 'simple-icons'
 
 type Group = { title: string; features: string[] }
@@ -45,6 +46,78 @@ const wishes = [
 
 const slugOf = (title: string) => title.toLowerCase().replace(/[^a-z]+/g, '-')
 
+// Diameters follow the supplied priority reference, independently of the theme.
+const wishSizes = [190, 144, 128, 94, 140, 100, 88, 118, 82, 108, 132, 98, 116, 84]
+const wishLabels = [
+  ['PvP'], ['Consoles'], ['Housing'], ['Races'], ['Mounts'], ['Mobile'],
+  ['Offline', 'mode'], ['Ironman /', 'hardcore'], ['Pets'], ['Private', 'servers'],
+  ['Advanced', 'guilds'], ['Customizable', 'UI'], ['World', 'events'], ['Raids'],
+]
+// Evenly spaced rings keep a regular circular silhouette.
+const packedWishes = (() => {
+  const order = [1, 4, 10, 2, 7, 3, 9, 12, 13, 11, 5, 6, 8]
+  const side = 760
+  return { side, nodes: wishes.map((_, index) => {
+    if (index === 0) return { x: side / 2, y: side / 2 }
+    const position = order.indexOf(index)
+    const inner = position < 5
+    const angle = (inner ? position / 5 : (position - 5) / 8) * Math.PI * 2 - Math.PI / 2
+    const radius = inner ? 174 : 365 - wishSizes[index] / 2
+    return { x: side / 2 + Math.cos(angle) * radius, y: side / 2 + Math.sin(angle) * radius }
+  }) }
+})()
+
+function WishGraph() {
+  const [pointer, setPointer] = useState<{ x: number; y: number } | null>(null)
+  const [hovered, setHovered] = useState<number | null>(null)
+  const [selected, setSelected] = useState(0)
+  const [reducedMotion, setReducedMotion] = useState(false)
+  useEffect(() => {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const update = () => setReducedMotion(reduced.matches)
+    update()
+    reduced.addEventListener('change', update)
+    return () => reduced.removeEventListener('change', update)
+  }, [])
+  const width = packedWishes.side
+  const height = packedWishes.side
+  const nodes = wishes.map((wish, index) => {
+    const { x, y } = packedWishes.nodes[index]
+    const dx = pointer ? x - pointer.x : 0
+    const dy = pointer ? y - pointer.y : 0
+    const distance = Math.hypot(dx, dy)
+    const force = pointer && !reducedMotion ? Math.max(0, 1 - distance / 230) * 2.5 : 0
+    return { ...wish, x: x + dx / (distance || 1) * force, y: y + dy / (distance || 1) * force, size: wishSizes[index] }
+  })
+  const movement = reducedMotion ? { duration: 0 } : { type: 'spring' as const, stiffness: 160, damping: 24 }
+  return <div className="wish-graph-wrap"><svg className="wish-graph" viewBox={`0 0 ${width} ${height}`} role="group" aria-label="Future ambitions, sized by importance"
+    onPointerMove={event => {
+      if (event.pointerType !== 'mouse' || reducedMotion) return
+      const svg = event.currentTarget
+      const matrix = svg.getScreenCTM()
+      if (!matrix) return
+      const point = new DOMPoint(event.clientX, event.clientY).matrixTransform(matrix.inverse())
+      setPointer({ x: point.x, y: point.y })
+    }} onPointerLeave={() => { setPointer(null); setHovered(null) }}>
+    <g className="wish-graph-links" aria-hidden="true">
+      {nodes.slice(1).map((node, index) => <motion.line key={node.label} initial={false} animate={{ x1: nodes[0].x, y1: nodes[0].y, x2: node.x, y2: node.y }} transition={movement} className={hovered === 0 || hovered === index + 1 ? 'is-lit' : ''} />)}
+    </g>
+    {nodes.map((node, index) => {
+      const lines = wishLabels[index]
+      const longestLine = Math.max(...lines.map(line => line.length))
+      const fontSize = Math.min(node.size * .2, node.size * .8 / (longestLine * .57))
+      return <motion.g key={node.label} className={`wish-graph-node${hovered === index ? ' is-lit' : ''}`} initial={false} animate={{ x: node.x, y: node.y }} transition={movement} tabIndex={0} role="button" aria-label={node.label} aria-pressed={selected === index}
+        onPointerEnter={() => setHovered(index)} onFocus={() => { setHovered(index); setSelected(index) }} onBlur={() => setHovered(null)}
+        onClick={() => setSelected(index)} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setSelected(index) } }}>
+        <circle r={node.size / 2} />
+        <text textAnchor="middle" fontSize={fontSize} aria-hidden="true">
+          {lines.map((line, i) => <tspan key={i} x="0" y={(i - (lines.length - 1) / 2) * fontSize * 1.25 + fontSize * .35}>{line}</tspan>)}
+        </text>
+      </motion.g>
+    })}
+  </svg><p className="wish-graph-caption" aria-live="polite">{wishes[hovered ?? selected].label}</p></div>
+}
+
 const SteamMark = () => <svg className="steam-mark" viewBox="0 0 24 24" aria-hidden="true"><path d={siSteam.path} /></svg>
 const PatreonMark = () => <svg className="patreon-mark" viewBox="0 0 24 24" aria-hidden="true"><path d={siPatreon.path} /></svg>
 const DiscordMark = () => <svg className="discord-mark" viewBox="0 0 24 24" aria-hidden="true"><path d={siDiscord.path} /></svg>
@@ -58,14 +131,29 @@ function App() {
     requestAnimationFrame(() => document.getElementById(target)?.scrollIntoView())
   }, [])
 
-  const move = (direction: number) => setActive(current => (current + direction + milestones.length) % milestones.length)
+  useEffect(() => {
+    const cards = milestones.map(milestone => document.getElementById(slugOf(milestone.title)))
+    let frame = 0
+    const update = () => {
+      frame = 0
+      const readingLine = window.innerHeight * .35
+      let current = 0
+      cards.forEach((card, index) => { if (card && card.getBoundingClientRect().top <= readingLine) current = index })
+      setActive(current)
+    }
+    const schedule = () => { if (!frame) frame = requestAnimationFrame(update) }
+    schedule()
+    window.addEventListener('scroll', schedule, { passive: true })
+    window.addEventListener('resize', schedule)
+    return () => { cancelAnimationFrame(frame); window.removeEventListener('scroll', schedule); window.removeEventListener('resize', schedule) }
+  }, [])
 
   return <main id="top">
     <a className="skip-link" href="#roadmap">Skip to roadmap</a>
 
     <header className="hero">
       <picture className="hero-mobile-art" aria-hidden="true"><img src="/assets/hero-mobile.webp" alt="" fetchPriority="high" /></picture>
-      <video className="hero-film" autoPlay muted loop playsInline preload="metadata" poster="/assets/hero.webp"><source src="/assets/world.webm" type="video/webm" media="(min-width: 681px)" /></video>
+      <video className="hero-film" autoPlay muted loop playsInline preload="metadata" poster="/assets/hero.webp" aria-hidden="true"><source src="/assets/world.webm" type="video/webm" /></video>
       <div className="hero-wash" />
       <nav className="masthead">
         <img src="/assets/logo.png" alt="Ichor Online" />
@@ -76,42 +164,38 @@ function App() {
         </div>
       </nav>
       <div className="hero-copy">
-        <h1>See Ichor Online take shape.</h1>
+        <div className="hero-logo"><img src="/assets/ichor_title.png" alt="Ichor Online" width="1042" height="528" fetchPriority="high" /></div>
+        <h1>Experience Ichor Online take shape.</h1>
         <p>Follow the game from its first complete loop to a larger, player-driven world. Plans can change after playtests.</p>
-        <a className="hero-steam" href="https://store.steampowered.com/app/3338980" target="_blank" rel="noreferrer">
-          <span>Wishlist Ichor Online</span><strong><SteamMark />On Steam</strong><i aria-hidden="true">↗</i>
-        </a>
+        <div className="hero-actions">
+          <a href="https://store.steampowered.com/app/3338980" target="_blank" rel="noreferrer"><SteamMark />Wishlist on Steam</a>
+          <a href="https://www.patreon.com/c/LeoGameDev" target="_blank" rel="noreferrer"><PatreonMark />Support on Patreon</a>
+        </div>
       </div>
-      <a className="scroll-cue" href="#roadmap">Explore the road <i /></a>
     </header>
 
     <section className="roadmap-index" id="roadmap" aria-labelledby="roadmap-heading">
       <header>
         <h2 id="roadmap-heading">The road ahead</h2>
-        <div className="index-controls">
-          <button type="button" onClick={() => move(-1)} aria-label="Previous milestone">←</button>
-          <button type="button" onClick={() => move(1)} aria-label="Next milestone">→</button>
-        </div>
       </header>
-      <div className={`milestone-accordion active-${active}`}>
-        {milestones.map((milestone,index)=><article className={`accordion-panel panel-${index}${active===index?' active':''}`} key={milestone.title} onFocus={()=>setActive(index)}>
-          <button type="button" onClick={()=>setActive(index)} aria-expanded={active===index}>
-            <span>{milestone.number}</span>
-            <h3><span className="title-vertical" aria-hidden="true">{milestone.title}</span><span className="title-horizontal">{milestone.title}</span></h3>
-            <p>{milestone.summary}</p>
-          </button>
-          <a href={`#${slugOf(milestone.title)}`}>View milestone <span>↘</span></a>
-        </article>)}
-      </div>
+      <div className="ornament-divider" aria-hidden="true"><img src="/assets/fantasy-divider.svg" alt="" /></div>
     </section>
 
     <section className="chapter-stack" aria-label="Milestone details">
-      {milestones.map((milestone,index)=><article className={`chapter-card chapter-${index}`} id={slugOf(milestone.title)} key={milestone.title}>
-        <div className="chapter-title"><span>{milestone.number}</span><h2>{milestone.title}</h2><p>{milestone.summary}</p></div>
-        <div className="chapter-features">
-          {milestone.groups.map(group=><section key={group.title}><h3>{group.title}</h3><ul>{group.features.map(feature=><li key={feature}>{feature}</li>)}</ul></section>)}
-        </div>
-      </article>)}
+      <div className="roadmap-steps">
+        {milestones.map((milestone,index)=><div className={`roadmap-step${active===index?' active':''}`} key={milestone.title}>
+          <a className="roadmap-step-marker" href={`#${slugOf(milestone.title)}`} onClick={()=>setActive(index)} aria-current={active === index ? 'step' : undefined} aria-label={`View ${milestone.title} milestone`}>
+            <span className="rail-node"><span>{milestone.number}</span></span>
+            <span className="rail-copy"><span>{milestone.title}</span></span>
+          </a>
+          <article className={`chapter-card chapter-${index}`} id={slugOf(milestone.title)}>
+            <div className="chapter-title"><h2>{milestone.title}</h2><img className="ornament-half" src="/assets/fantasy-half-divider.svg" alt="" aria-hidden="true" /><p>{milestone.summary}</p></div>
+            <div className="chapter-features">
+              {milestone.groups.map(group=><section key={group.title}><h3>{group.title}</h3><ul>{group.features.map(feature=><li key={feature}>{feature}</li>)}</ul></section>)}
+            </div>
+          </article>
+        </div>)}
+      </div>
     </section>
 
     <section className="wishes">
@@ -120,21 +204,16 @@ function App() {
         <h2>If the gods of Ichor<br/>grant us more wishes</h2>
         <p>Some ambitions need more time, more players, or both.</p>
       </div>
-      <div className="wish-orbit" aria-label="Future ambitions">
-        {wishes.slice(0, 2).map(wish=><span className={`wish-bubble ${wish.className}`} key={wish.label}>{wish.label}</span>)}
-        <span className="wish-image wish-image-meadow" aria-hidden="true"><img src="/assets/wish-meadow-thumb.webp" alt="" loading="lazy" decoding="async" /></span>
-        {wishes.slice(2, 7).map(wish=><span className={`wish-bubble ${wish.className}`} key={wish.label}>{wish.label}</span>)}
-        <span className="wish-image wish-image-world" aria-hidden="true"><img src="/assets/wish-world-thumb.webp" alt="" loading="lazy" decoding="async" /></span>
-        {wishes.slice(7).map(wish=><span className={`wish-bubble ${wish.className}`} key={wish.label}>{wish.label}</span>)}
-      </div>
+      <WishGraph />
     </section>
 
     <section className="action">
+      <div className="ornament-divider action-divider" aria-hidden="true"><img src="/assets/fantasy-divider.svg" alt="" /></div>
       <h2>Follow the road<br/>as it changes.</h2>
       <div><a className="primary" href="https://store.steampowered.com/app/3338980" target="_blank" rel="noreferrer"><SteamMark />Wishlist on Steam</a><a href="https://www.patreon.com/c/LeoGameDev" target="_blank" rel="noreferrer"><PatreonMark />Support on Patreon</a><a href="https://discord.gg/5dYE9NWxdb" target="_blank" rel="noreferrer"><DiscordMark />Join Discord</a></div>
     </section>
 
-    <footer><span>Qilvo Games</span><p>Milestones show priorities, not release dates. Features may move when testing reveals a better path.</p><a href="#top" onClick={()=>window.scrollTo({top:0,behavior:'smooth'})}>Back to top ↑</a></footer>
+    <footer><span>Qilvo Games</span><p>Milestones show priorities, not release dates. Features may move when testing reveals a better path.</p></footer>
   </main>
 }
 
