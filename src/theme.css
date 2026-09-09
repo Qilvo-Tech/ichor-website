@@ -23,7 +23,6 @@
   font-size: 16px;
   line-height: 1.6;
 }
-
 h1, h2, h3 { text-wrap: balance; }
 a:focus-visible, button:focus-visible { outline: 2px solid #e9a75b; outline-offset: 5px; }
 [id] { scroll-margin-top: 24px; }
@@ -76,7 +75,13 @@ a:focus-visible, button:focus-visible { outline: 2px solid #e9a75b; outline-offs
 .chapter-list { min-width: 0; }
 .chapter-card { position: relative; isolation: isolate; top: auto; min-width: 0; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 48px; padding: 48px; margin-bottom: 24px; border: 0; background: transparent; color: var(--parchment); box-shadow: none; scroll-margin-top: 32px; }
 /* Fade the surface and its border together; content never enters this mask. */
-.chapter-card::before { position: absolute; inset: 0; z-index: 0; border: 1px solid #62726980; background: #0c1717; -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 48%); mask-image: linear-gradient(90deg, transparent 0%, #000 48%); pointer-events: none; content: ''; }
+.chapter-0 { --milestone-art: url('/assets/milestone-foundation.webp'); }
+.chapter-1 { --milestone-art: url('/assets/milestone-fellowship.webp'); }
+.chapter-2 { --milestone-art: url('/assets/milestone-craft.webp'); }
+.chapter-3 { --milestone-art: url('/assets/milestone-mastery.webp'); }
+.chapter-card::before { position: absolute; inset: 0; z-index: 0; border: 1px solid #62726980; background: linear-gradient(90deg, #0c1717d9, #0c1717bf), var(--milestone-art) center / cover, #0c1717; -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 48%); mask-image: linear-gradient(90deg, transparent 0%, #000 48%); pointer-events: none; content: ''; }
+/* Neutral grain breaks up dark color quantization, only across the surface fade. */
+.chapter-card::after { position: absolute; inset: 0; z-index: 0; background: url('/assets/fade-dither.svg') repeat; opacity: .07; mix-blend-mode: soft-light; -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 42%, transparent 58%); mask-image: linear-gradient(90deg, transparent, #000 12%, #000 42%, transparent 58%); pointer-events: none; content: ''; }
 .chapter-card > * { position: relative; z-index: 1; }
 .chapter-title > span { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; border: 1px solid var(--bronze); background: #101b1b; box-shadow: none; border-radius: 50%; font-size: .875rem; color: var(--gold); }
 .chapter-title h2 { font-family: var(--display-font); font-size: clamp(2rem, 3.2vw, 2.75rem); font-weight: 700; line-height: 1.15; letter-spacing: 0; text-transform: none; margin: 20px 0; }
@@ -100,10 +105,11 @@ a:focus-visible, button:focus-visible { outline: 2px solid #e9a75b; outline-offs
 .action { padding: 72px var(--page-gutter) 80px; text-align: center; background: linear-gradient(90deg, #080f10e8, #0e1b1bba, #080f10e8), url('/assets/wish-meadow.webp') center 60% / cover; border-top: 1px solid var(--bronze); }
 .action-divider { margin: 0 auto 44px; opacity: .62; }
 .action h2 { max-width: 760px; margin: 0 auto 32px; }
-.action > div { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; }
+.action > .action-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; }
 .action a { min-width: 220px; min-height: 54px; padding: 14px 22px; font-size: .875rem; font-weight: 700; text-transform: uppercase; }
 .action a.primary { background: linear-gradient(110deg, #146b48, #0b4832); color: #fff; border-color: #438969; }
-.action a:hover { background: #185f44; border-color: #65a487; }
+.action a:not(.primary):hover { background: #185f44; border-color: #65a487; }
+.action a.primary:hover { background: linear-gradient(110deg, #146b48, #0b4832); border-color: #65a487; }
 footer { justify-items: center; padding: 36px var(--page-gutter) 44px; font-size: .8125rem; line-height: 1.7; text-align: center; }
 
 @media (max-width: 980px) {
@@ -151,7 +157,7 @@ footer { justify-items: center; padding: 36px var(--page-gutter) 44px; font-size
   .wish-pvp { width: 144px; height: 144px; font-size: 1.75rem; }
   .action { padding: 56px var(--page-gutter); }
   .action h2 { max-width: none; font-size: 1.875rem; margin-bottom: 28px; }
-  .action > div { display: grid; gap: 12px; }
+  .action > .action-links { display: grid; gap: 12px; }
   footer { grid-template-columns: 1fr; gap: 16px; }
 }
 
@@ -169,6 +175,9 @@ footer { justify-items: center; padding: 36px var(--page-gutter) 44px; font-size
 .wish-graph-node circle { fill: #142322; stroke: #75877b; stroke-opacity: .65; stroke-width: 1; transition: fill .25s, stroke .25s, filter .25s; }
 .wish-graph-node text { fill: var(--parchment); font-family: 'Roboto Slab', Georgia, serif; pointer-events: none; }
 .wish-graph-node.is-lit circle, .wish-graph-node:focus-visible circle { fill: #20332e; stroke: var(--gold); stroke-opacity: 1; filter: drop-shadow(0 0 8px #d5c79f33); }
+.wish-graph-node[aria-pressed="true"] circle { fill: #20332e; stroke: var(--gold); stroke-opacity: 1; filter: drop-shadow(0 0 10px #d5c79f26); }
+.wish-graph-node.wish-support circle { fill: url('#support-gold'); stroke: #f3dfa4; stroke-opacity: 1; filter: drop-shadow(0 0 14px #d8b45b66) drop-shadow(0 0 30px #d8b45b26); }
+.wish-graph-node.wish-support text { fill: #242619; font-weight: 600; }
 @media (max-width: 680px) { .wish-graph { width: calc(100% + 24px); max-width: none; margin-left: -12px; margin-top: 24px; } }
 @media (prefers-reduced-motion: reduce) { .wish-graph-node circle { transition: none; } }
 
@@ -195,12 +204,12 @@ footer { justify-items: center; padding: 36px var(--page-gutter) 44px; font-size
 .masthead a { letter-spacing: .08em; }
 .hero h1 { text-shadow: 0 3px 24px #0009; }
 .hero-copy > p { text-shadow: 0 2px 8px #0008; }
-.roadmap-index { background: linear-gradient(var(--ink), #132120); }
-.chapter-stack { background: linear-gradient(#132120, var(--ink)); }
+.roadmap-index { background: var(--ink); }
+.chapter-stack { background: var(--ink); }
 .wishes-copy > span { letter-spacing: .2em; }
 .wishes h2, .action h2 { text-shadow: 0 3px 20px #0008; }
 .action { padding-top: 96px; padding-bottom: 104px; }
-.hero-steam:hover, .action a.primary:hover { background: #1a7953; border-color: #65a487; }
+.hero-steam:hover { background: #1a7953; border-color: #65a487; }
 footer { background: var(--deep); }
 .hero .scroll-cue { position: absolute; left: 50%; bottom: 22px; display: block; transform: translateX(-50%); }
 .roadmap-arrow { display: block; width: 34px; height: 44px; filter: drop-shadow(0 2px 7px #0008); transition: transform .2s ease, filter .2s ease; }
@@ -222,7 +231,7 @@ footer { background: var(--deep); }
 .hero .hero-copy > p { max-width: 620px; margin: 16px 0 0; font-size: 1rem; line-height: 1.65; }
 .hero-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 18px; margin-top: 30px; }
 .hero-actions a { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-width: 240px; min-height: 60px; padding: 16px 24px; background: linear-gradient(110deg, #146b48, #0b4832); border: 1px solid #438969; color: #fff; font-weight: 700; font-size: .9375rem; text-transform: uppercase; letter-spacing: .035em; text-decoration: none; box-shadow: 0 4px 16px #0004; transition: background .2s, transform .2s; }
-.hero-actions a:hover { background: #1a7953; transform: translateY(-2px); }
+.hero-actions a:hover { border-color: #65a487; }
 .hero-actions a:last-child { background: transparent; border-color: var(--bronze); box-shadow: none; }
 .hero-actions a:last-child:hover { background: #185f44; border-color: #65a487; }
 .hero-actions svg { width: 22px; height: 22px; }
@@ -258,22 +267,24 @@ footer { background: var(--deep); }
 }
 
 /* Timeline rows share the height of their milestone cards, so the path reaches the end. */
-.chapter-stack { display: block; padding-top: 42px; }
-.roadmap-steps { position: relative; }
+.chapter-stack { display: block; padding: 40px var(--page-gutter) var(--section-space); }
+.roadmap-steps { position: relative; display: grid; grid-auto-rows: 1fr; row-gap: 32px; }
 .roadmap-steps::before { position: absolute; top: 54px; bottom: 54px; left: 18px; width: 1px; background: linear-gradient(transparent, var(--gold) 4%, var(--gold) 96%, transparent); box-shadow: 0 0 9px #d5c79f66; content: ''; }
 .roadmap-step { position: relative; display: grid; grid-template-columns: minmax(196px, .42fr) minmax(0, 1.58fr); gap: clamp(40px, 7vw, 108px); align-items: start; }
 .roadmap-step-marker { display: flex; align-items: center; gap: 18px; min-height: 48px; margin-top: 34px; color: var(--paper); text-decoration: none; }
 .roadmap-step .rail-node { z-index: 1; }
 .roadmap-step.active .rail-node, .roadmap-step-marker:hover .rail-node, .roadmap-step-marker:focus-visible .rail-node { border-color: var(--gold); background: #263631; box-shadow: 0 0 0 5px #132120, 0 0 16px #d5c79f55; }
 .roadmap-step.active .rail-copy span { color: #fffdf2; }
-.roadmap-step .chapter-card { margin-bottom: 24px; }
-.chapter-title h2 { margin-top: 0; }
+.roadmap-step .chapter-card { align-self: stretch; margin-bottom: 0; }
+.chapter-title h2 { margin: 0 0 24px; }
 .chapter-title p { margin-bottom: 0; line-height: 1.75; }
 .chapter-features { min-width: 0; }
 .chapter-card { content-visibility: visible; contain-intrinsic-size: none; }
 .chapter-features section { grid-template-columns: minmax(96px, .36fr) minmax(0, 1fr); gap: 24px; }
 .chapter-features h3 { letter-spacing: .06em; }
-.chapter-features li { line-height: 1.65; }
+.chapter-features ul { list-style: disc; padding-left: 1.15em; }
+.chapter-features li { line-height: 1.65; padding-left: .2em; margin-bottom: 8px; }
+.chapter-features li::marker { color: var(--gold); font-size: .85em; }
 .roadmap-step-marker { min-height: 48px; }
 .rail-node > span { font-size: .875rem; font-variant-numeric: tabular-nums; }
 .hero .scroll-cue { padding: 8px 16px; }
@@ -301,4 +312,57 @@ footer { grid-template-columns: 1fr; gap: 12px; }
 @media (prefers-reduced-motion: reduce) {
   .roadmap-arrow, .rail-node, .rail-copy span, .wish-graph-links line { transition: none; }
   .scroll-cue:hover .roadmap-arrow, .scroll-cue:focus-visible .roadmap-arrow { transform: none; }
+}
+
+/* Keep the closing invitation in one centered, evenly spaced composition. */
+.action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(28px, 3vw, 40px);
+  padding: clamp(64px, 7vw, 104px) var(--page-gutter);
+}
+.action > .action-divider { display: block; width: min(100%, 640px); margin: 0; }
+.action .action-divider img { width: 100%; }
+.action h2 { max-width: 20ch; margin: 0; color: var(--parchment); font-size: clamp(2.25rem, 4vw, 3.5rem); line-height: 1.12; }
+.action > .action-links { width: min(100%, 900px); margin: 0; gap: 16px; }
+.action-links a { flex: 1 1 240px; min-height: 60px; }
+.hero-actions a, .action-links a { transition: border-color .2s, box-shadow .2s, background-color .2s; }
+.hero-actions a:first-child:hover, .action-links a.primary:hover { box-shadow: inset 0 0 0 1px #65a487; }
+@media (max-width: 680px) {
+  .action > .action-links { max-width: 360px; gap: 12px; }
+  .action-links a { min-height: 56px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-actions a, .action-links a { transition: none; }
+}
+
+/* Shared gutters and an 8px spacing rhythm across the page. */
+.hero-actions { gap: 16px; margin-top: 32px; }
+.hero-logo { margin-bottom: 32px; }
+.roadmap-index > header { margin-bottom: 24px; }
+.roadmap-index .ornament-divider { margin: 0 auto; }
+.chapter-card { padding: 40px; gap: 32px; }
+.chapter-title .ornament-half { margin: 0 0 24px; }
+.chapter-features section { padding: 24px 0; gap: 24px; }
+.chapter-features h3 { margin-top: 3px; }
+.wishes { padding-block: var(--section-space); }
+.wish-graph { margin-top: 40px; }
+.wish-graph-caption { margin-top: 24px; }
+footer { padding-block: 40px; gap: 16px; }
+@media (min-width: 681px) and (max-width: 1200px) {
+  .chapter-card { grid-template-columns: 1fr; }
+}
+@media (max-width: 680px) {
+  .chapter-stack { padding-top: 32px; }
+  .roadmap-steps { row-gap: 24px; }
+  .chapter-card { padding: 24px 16px; gap: 24px; }
+  .chapter-title h2 { margin: 0 0 16px; }
+  .chapter-title .ornament-half { margin-bottom: 16px; }
+  .chapter-features section { padding: 16px 0; gap: 8px; }
+  .hero-logo { margin-bottom: 24px; }
+  .hero-actions { margin-top: 24px; gap: 12px; }
+  .wish-graph { margin-top: 32px; }
+  .wish-graph-caption { margin-top: 16px; }
+  footer { padding-block: 32px; }
 }
