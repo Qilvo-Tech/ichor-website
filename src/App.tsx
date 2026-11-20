@@ -205,7 +205,7 @@ function App() {
         </div>
       </nav>
       <div className="hero-copy">
-        <div className="hero-logo"><img src="/assets/ichor_title.png" alt="Ichor Online" width="1042" height="528" fetchPriority="high" /></div>
+        <div className="hero-logo"><img src="/assets/ichor_logo_in_development.png?v=dabe63ec" alt="Ichor Online — In development" width="1280" height="1080" fetchPriority="high" /></div>
         <h1>Experience Ichor Online take shape.</h1>
         <p>Follow the game from its first complete loop to a larger, player-driven world. Plans can change after playtests.</p>
         <div className="hero-actions">
