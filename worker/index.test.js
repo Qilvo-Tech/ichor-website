@@ -1,6 +1,15 @@
 import assert from 'node:assert/strict'
+import { readFile } from 'node:fs/promises'
 import test from 'node:test'
 import worker, { VisitCounter } from './index.js'
+
+test('browser security policy permits the same-origin counter without enabling outside connections', async () => {
+  const headers = await readFile(new URL('../public/_headers', import.meta.url), 'utf8')
+  const policy = headers.split('\n').find(line => line.trim().startsWith('Content-Security-Policy:'))
+  assert.ok(policy)
+  const connections = policy.split(';').find(directive => directive.trim().startsWith('connect-src '))
+  assert.equal(connections?.trim(), "connect-src 'self'")
+})
 
 function setup() {
   const stored = new Map()

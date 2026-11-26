@@ -46,3 +46,7 @@ These are approximate page views, not unique visitors: refreshes count again,
 JavaScript-disabled or blocked requests do not count, and automated requests can
 inflate the total. Same-origin checks reject browser requests from other sites;
 they do not authenticate requests from scripts. There is no reset endpoint.
+
+See the [privacy review and service comparison](docs/visit-counter-privacy.md)
+for the choice of this minimal counter over LibreCounter, the hosting-data
+boundary, and the limits of the compliance assessment.
