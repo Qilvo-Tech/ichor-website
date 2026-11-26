@@ -41,7 +41,7 @@ of the counter.
 ## Notice and assessment
 
 The footer links to `/privacy/`, a static page that needs no JavaScript. It names
-Qilvo Tech OÜ (Qilvo Games) and the privacy contact leo@qilvo.games. The compact
+Qilvo Tech OÜ (Qilvo Games) and the privacy contact support@qilvo.games. The compact
 company block also includes its registered office (Tallinn), registry code,
 register, and VAT number, checked against Estonia's official e-Business
 Register. The notice uses plain language and includes no street address or link
