@@ -44,7 +44,8 @@ The footer links to `/privacy/`, a static page that needs no JavaScript. It name
 Qilvo Tech OÜ (Qilvo Games) and the privacy contact leo@qilvo.games. The compact
 company block also includes its registered office (Tallinn), registry code,
 register, and VAT number, checked against Estonia's official e-Business
-Register. No street address is included.
+Register. The notice uses plain language and includes no street address or link
+to the company register.
 Commercial Code section 15(2) requires the company name, registered office, and
 registry code. Information Society Services Act section 4 separately requires
 an address for information-society service providers; its application to this
@@ -134,7 +135,7 @@ days for diagnostics. Switching providers would not remove that distinction.
 
 ## Sources
 
-- [Official company register](https://ariregister.rik.ee/eng/company/17282132)
+- Estonian e-Business Register, company record 17282132 (checked 26 November 2026).
 - [Commercial Code, section 15](https://www.riigiteataja.ee/en/akt/527022024004)
 - [Information Society Services Act, section 4](https://www.riigiteataja.ee/en/akt/527072026007)
 - [GDPR Article 13](https://eur-lex.europa.eu/eli/reg/2016/679/)
