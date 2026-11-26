@@ -1,4 +1,5 @@
 const noStore = { 'Cache-Control': 'no-store' }
+const countedPages = new Set(['/', '/index.html', '/privacy/', '/privacy/index.html'])
 
 export class VisitCounter {
   constructor(state) {
@@ -18,33 +19,41 @@ export class VisitCounter {
 }
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, context) {
     const url = new URL(request.url)
 
-    if (url.pathname !== '/api/visits') {
-      return env.ASSETS.fetch(request)
-    }
-
-    if (request.method !== 'GET' && request.method !== 'POST') {
-      return new Response(null, {
-        status: 405,
-        headers: { ...noStore, Allow: 'GET, POST' },
-      })
-    }
-
-    if (request.method === 'POST') {
-      if (request.headers.get('Origin') !== url.origin) {
-        return new Response(null, { status: 403, headers: noStore })
+    if (url.pathname === '/api/visits') {
+      if (request.method !== 'GET') {
+        return new Response(null, {
+          status: 405,
+          headers: { ...noStore, Allow: 'GET' },
+        })
       }
-
-      if (request.headers.get('DNT') === '1' || request.headers.get('Sec-GPC') === '1') {
-        return new Response(null, { status: 204, headers: noStore })
-      }
+      return env.VISITS.getByName('website').fetch('https://counter/visits')
     }
 
-    // Keep visitor headers, cookies, and URLs out of durable storage.
-    return env.VISITS.getByName('website').fetch('https://counter/visits', {
-      method: request.method,
-    })
+    const response = await env.ASSETS.fetch(request)
+    const destination = request.headers.get('Sec-Fetch-Dest')
+    const purpose = request.headers.get('Sec-Purpose') ?? request.headers.get('Purpose') ?? ''
+
+    if (
+      url.hostname === 'ichor.qilvo.games' &&
+      countedPages.has(url.pathname) &&
+      request.method === 'GET' &&
+      response.status === 200 &&
+      response.headers.get('Content-Type')?.startsWith('text/html') &&
+      request.headers.get('Accept')?.includes('text/html') &&
+      (!destination || destination === 'document') &&
+      !/prefetch|prerender/i.test(purpose) &&
+      request.headers.get('DNT') !== '1' &&
+      request.headers.get('Sec-GPC') !== '1'
+    ) {
+      // Counting must not delay or break page delivery; visitor metadata stays out of storage.
+      context.waitUntil(Promise.resolve().then(() => {
+        return env.VISITS.getByName('website').fetch('https://counter/visits', { method: 'POST' })
+      }).catch(() => {}))
+    }
+
+    return response
   },
 }
