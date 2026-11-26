@@ -254,7 +254,7 @@ function App() {
       <div className="action-links"><a className="primary" href="https://store.steampowered.com/app/3338980" target="_blank" rel="noreferrer"><SteamMark />Wishlist on Steam</a><a href="https://www.patreon.com/c/LeoGameDev" target="_blank" rel="noreferrer"><PatreonMark />Support on Patreon</a><a href="https://discord.gg/5dYE9NWxdb" target="_blank" rel="noreferrer"><DiscordMark />Join Discord</a></div>
     </section>
 
-    <footer><span>Qilvo Games</span><p>Milestones show priorities, not release dates. Features may move when testing reveals a better path.</p></footer>
+    <footer><span>Qilvo Games</span><p>Milestones show priorities, not release dates. Features may move when testing reveals a better path.</p><a href="/privacy/">Privacy</a></footer>
   </main>
 }
 
